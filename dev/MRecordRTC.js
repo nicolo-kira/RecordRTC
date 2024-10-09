@@ -143,7 +143,7 @@ function MRecordRTC(mediaStream) {
                 }
             }
 
-            this.videoRecorder = new RecordRTC(newStream, {
+            var recordRTCConfig = {
                 type: 'video',
                 video: this.video,
                 canvas: this.canvas,
@@ -156,8 +156,16 @@ function MRecordRTC(mediaStream) {
                 workerPath: this.workerPath,
                 webAssemblyPath: this.webAssemblyPath,
                 frameRate: this.frameRate, // used by WebAssemblyRecorder; values: usually 30; accepts any.
-                bitrate: this.bitrate // used by WebAssemblyRecorder; values: 0 to 1000+
-            });
+                bitrate: this.bitrate, // used by WebAssemblyRecorder; values: 0 to 1000+
+            };
+
+            if (this.videoBitsPerSecond) {
+                console.log('MRecordRTC setting videoBitsPerSecond', this.videoBitsPerSecond);
+                recordRTCConfig.videoBitsPerSecond = this.videoBitsPerSecond;
+            }
+
+
+            this.videoRecorder = new RecordRTC(newStream, recordRTCConfig);
 
             if (!mediaType.audio) {
                 this.videoRecorder.startRecording();
